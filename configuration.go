@@ -33,7 +33,7 @@ type Configuration struct {
 	InitialEntries  int
 	ListOnly        bool	`json:"-"`
 	User            string
-	Password        string  `json:"-"`
+	Password        string
 	Verbose         bool	`json:"-"`
 	MoreVerbose     bool	`json:"-"`
 	TraceRequests   bool	`json:"-"`
@@ -45,7 +45,7 @@ var confDir = ".elktail"
 var defaultConfFile = "default.json"
 
 //When changing this array, make sure to also make appropriate changes in CopyConfigRelevantSettingsTo
-var configRelevantFlags = []string{"url", "f", "i", "t", "u", "ssh"}
+var configRelevantFlags = []string{"url", "f", "i", "t", "u", "p", "ssh"}
 
 
 
@@ -79,6 +79,7 @@ func (c *Configuration) CopyConfigRelevantSettingsTo(dest *Configuration) {
 	dest.QueryDefinition.Terms = make([]string, len(c.QueryDefinition.Terms))
 	copy(dest.QueryDefinition.Terms, c.QueryDefinition.Terms)
 	dest.User = c.User
+	dest.Password = c.Password
 	dest.SSHTunnelParams = c.SSHTunnelParams
 }
 
@@ -89,7 +90,6 @@ func (c *Configuration) CopyNonConfigRelevantSettingsTo(dest *Configuration) {
 	dest.QueryDefinition.BeforeDateTime = c.QueryDefinition.BeforeDateTime
 	dest.ListOnly = c.ListOnly
 	dest.InitialEntries = c.InitialEntries
-	dest.Password = c.Password
 	dest.Verbose = c.Verbose
 	dest.MoreVerbose = c.MoreVerbose
 	dest.TraceRequests = c.TraceRequests
@@ -202,8 +202,14 @@ func (config *Configuration) Flags() []cli.Flag {
 		cli.StringFlag{
 			Name:        "u",
 			Value:       "",
-			Usage:       "(*) Username for http basic auth, password is supplied over password prompt",
+			Usage:       "(*) Username for http basic auth",
 			Destination: &config.User,
+		},
+		cli.StringFlag{
+			Name:        "p",
+			Value:       "",
+			Usage:       "(*) Password for http basic auth",
+			Destination: &config.Password,
 		},
 		cli.StringFlag{
 			Name:        "ssh,ssh-tunnel",

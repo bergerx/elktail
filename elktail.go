@@ -412,7 +412,7 @@ func main() {
 			}
 		}
 
-		if config.User != "" {
+		if config.User != "" && config.Password == "" {
 			fmt.Print("Enter password: ")
 			config.Password = readPasswd()
 		}
